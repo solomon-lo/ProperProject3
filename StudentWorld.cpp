@@ -19,6 +19,14 @@ StudentWorld::StudentWorld(string assetPath)
 	numOfPits = 0;
 	numOfBacteria = 0;
 }
+int StudentWorld::getNumOfPits()
+{
+	return numOfPits;
+}
+int StudentWorld::getNumOfBacteria()
+{
+	return numOfBacteria;
+}
 
 void StudentWorld::modifyNumOfPits(int modifyAmount)
 {
@@ -129,27 +137,8 @@ int StudentWorld::init()
 		DirtPile* newDirt = new DirtPile(randomDirtX, randomDirtY, this);
 		addToActorsVector(newDirt);
 	}
-		addToActorsVector(new Salmonella(120, 120, this));
-		const double PI = 4 * atan(1);
-		double goodieX = (VIEW_WIDTH / 2) + (128 * cos(175 * 1.0 / 360 * 2 * PI));
-		double goodieY = (VIEW_HEIGHT / 2) + (128 * sin(175 * 1.0 / 360 * 2 * PI));
-		double flameX = (VIEW_WIDTH / 2) + (128 * cos(160 * 1.0 / 360 * 2 * PI));
-		double flameY = (VIEW_HEIGHT / 2) + (128 * sin(160 * 1.0 / 360 * 2 * PI));
-		ActorsVector.push_back(new FlameThrowerGoodie(flameX, flameY, this));
 
-		//double extraLifeX = (VIEW_WIDTH / 2) + (128 * cos(185 * 1.0 / 360 * 2 * PI));
-		//double extraLifeY = (VIEW_HEIGHT / 2) + (128 * sin(185 * 1.0 / 360 * 2 * PI));
-		//ActorsVector.push_back(new ExtraLifeGoodie(extraLifeX, extraLifeY, this));
-		//playerObject = new Socrates(this);
-
-		double fungusX = (VIEW_WIDTH / 2) + (128 * cos(185 * 1.0 / 360 * 2 * PI));
-		double fungusY = (VIEW_HEIGHT / 2) + (128 * sin(185 * 1.0 / 360 * 2 * PI));
-		ActorsVector.push_back(new Fungus(fungusX, fungusY, this));
-
-
-
-		//init food items
-		return GWSTATUS_CONTINUE_GAME;
+	return GWSTATUS_CONTINUE_GAME;
 
 }
 
@@ -157,8 +146,8 @@ int StudentWorld::move()
 {
 	if (playerObject->getHP() <= 0 || playerObject->getAliveStatus() == false)
 	{
-		return GWSTATUS_PLAYER_DIED;
 		decLives();
+		return GWSTATUS_PLAYER_DIED;
 	}
 
 	if (numOfPits == 0 && numOfBacteria == 0)

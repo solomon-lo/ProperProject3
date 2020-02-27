@@ -45,6 +45,8 @@ public:
 	void fungusEffect();
 	bool findFoodWithin128(double bacteriaX, double bacteriaY, double& foodX, double& foodY);
 	bool findSocratesWithinDistance(double bacteriaX, double bacteriaY, double& SocratesX, double& SocratesY, int inputDistance);
+	int getNumOfPits();
+	int getNumOfBacteria();
 	void modifyNumOfPits(int modifyAmount);
 	void modifyNumOfBacteria(int modifyAmount);
 

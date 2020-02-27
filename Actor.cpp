@@ -106,7 +106,6 @@ void Pit::doSomething()
 				getStudentWorld()->addToActorsVector(new Salmonella(getX(), getY(), getStudentWorld()));
 				RegularSalmonellaInventory--;
 				bacteriaSpawned = true;
-				getStudentWorld()->modifyNumOfBacteria(1);
 				cerr << "Spawned Salmonella" << endl;
 			}
 			else if ((chooseBacteriaToSpawn == 2) && (AggressiveSalmonellaInventory > 0))
@@ -114,7 +113,6 @@ void Pit::doSomething()
 				getStudentWorld()->addToActorsVector(new AggressiveSalmonella(getX(), getY(), getStudentWorld()));
 				AggressiveSalmonellaInventory--;
 				bacteriaSpawned = true;
-				getStudentWorld()->modifyNumOfBacteria(1);
 				cerr << "Spawned Aggressive Salmonella" << endl;
 			}
 			else if ((chooseBacteriaToSpawn == 3) && (EColiInventory > 0))
@@ -122,12 +120,12 @@ void Pit::doSomething()
 				getStudentWorld()->addToActorsVector(new EColi(getX(), getY(), getStudentWorld()));
 				EColiInventory--;
 				bacteriaSpawned = true;
-				getStudentWorld()->modifyNumOfBacteria(1);
 				cerr << "Spawned EColi" << endl;
 			}
 		}
 		getStudentWorld()->playSound(SOUND_BACTERIUM_BORN);
 		getStudentWorld()->modifyNumOfBacteria(1);
+		cerr << "bacteria added, now: " << getStudentWorld()->getNumOfBacteria();
 	}
 
 }
@@ -668,6 +666,8 @@ void AggressiveSalmonella::modifyHP(int modifyAmount)
 		else
 		{
 			getStudentWorld()->playSound(SOUND_SALMONELLA_DIE);
+			cerr << "bacteria died, current num of bac: " << getStudentWorld()->getNumOfBacteria();
+			getStudentWorld()->increaseScore(100);
 			getStudentWorld()->modifyNumOfBacteria(-1);
 		}
 	}
@@ -712,6 +712,7 @@ void AggressiveSalmonella::doSomething()
 			int newX = newXAfter3Food(getX());
 			int newY = newYAfter3Food(getY());
 			getStudentWorld()->addToActorsVector(new AggressiveSalmonella(newX, newY, getStudentWorld()));
+			getStudentWorld()->modifyNumOfBacteria(1);
 			modifyFoodEaten(-1 * getFoodEaten());
 			hasDividedThisTick = true;
 		}
@@ -754,6 +755,8 @@ void Salmonella::modifyHP(int modifyAmount)
 		else
 		{
 			getStudentWorld()->playSound(SOUND_SALMONELLA_DIE);
+			cerr << "bacteria died, current num of bac: " << getStudentWorld()->getNumOfBacteria();
+			getStudentWorld()->increaseScore(100);
 			getStudentWorld()->modifyNumOfBacteria(-1);
 		}
 	}
@@ -775,6 +778,7 @@ void Salmonella::doSomething()
 			int newX = newXAfter3Food(getX());
 			int newY = newYAfter3Food(getY());
 			getStudentWorld()->addToActorsVector(new Salmonella(newX, newY, getStudentWorld()));
+			getStudentWorld()->modifyNumOfBacteria(1);
 			modifyFoodEaten(-3);
 			hasDividedThisTick = true;
 		}
@@ -816,7 +820,9 @@ void EColi::modifyHP(int modifyAmount)
 		else
 		{
 			getStudentWorld()->playSound(SOUND_ECOLI_DIE);
+			getStudentWorld()->increaseScore(100);
 			getStudentWorld()->modifyNumOfBacteria(-1);
+			cerr << "bacteria died, current num of bac: " << getStudentWorld()->getNumOfBacteria();
 		}
 	}
 	ActorBaseClass::modifyHP(modifyAmount);
@@ -840,6 +846,7 @@ void EColi::doSomething()
 			int newY = newYAfter3Food(getY());
 			EColi* newEColi = new EColi(newX, newY, getStudentWorld());
 			getStudentWorld()->addToActorsVector(newEColi);
+			getStudentWorld()->modifyNumOfBacteria(1);
 			modifyFoodEaten(-1 * getFoodEaten());
 			hasDividedThisTick = true;
 		}
