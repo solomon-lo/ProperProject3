@@ -33,11 +33,18 @@ int StudentWorld::getNumOfBacteria()
 void StudentWorld::modifyNumOfPits(int modifyAmount)
 {
 	numOfPits += modifyAmount;
+	cerr << "========" << endl;
+	cerr << "numOfPits: " << getNumOfPits();
+	cerr << "========" << endl;
 }
 
 void StudentWorld::modifyNumOfBacteria(int modifyAmount)
 {
 	numOfBacteria+= modifyAmount;
+
+	cerr << "========" << endl;
+	cerr << "numOfBac: " << getNumOfBacteria();
+	cerr << "========" << endl;
 }
 
 int StudentWorld::init()

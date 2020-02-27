@@ -23,30 +23,43 @@ public:
 	////virtual function, MUST HAVE
 	//virtual void getPositionInThisDirection(Direction angle, int units, double& dx, double& dy);
 
-
+	//virtual function that's pure
 	virtual void doSomething() = 0;
 
+	//returns true if alive, false if dead
 	virtual bool getAliveStatus();
 
+	//sets the bool tracker of alive or not to false to symbolize death
 	virtual void setAsDead();
 
+	//returns pointer to the studentWorld
 	virtual StudentWorld* getStudentWorld();
 
+	//virtual destructor, essential due to inheritance
 	virtual ~ActorBaseClass();
 
+	//returns the hitpoints of the actor
 	virtual double getHP();
 
+	//checks if there's less than 0 HP, logically sets it to dead
 	virtual bool SetAsDeadIfLessThan0HP();
 
+	//changes the modifyHP by added whatever modifyAmount is to it
 	virtual void modifyHP(int modifyAmount);
 
+	//sees if it overlaps with Socrates
 	virtual bool checkAliveAndIfOverlapWithSocrates();
 
+	//checks to see if spray will harm it, returns true if it will
 	virtual bool sprayWillHarm();
+
+	//checks to see if flame will harm it, returns true if it willx
 	virtual bool flameWillHarm();
 
+	//returns whether or not the object can be eaten and then destroyed by Socrates
 	virtual bool isEdible();
 
+	//returns whether or not it will cause the bacteria to stop and change direction, then go
 	virtual bool blocksBacteriumMovement() const;
 
 
@@ -61,7 +74,10 @@ private:
 class Pit : public ActorBaseClass
 {
 public:
+	//constrcutor
 	Pit(double startX, double startY, StudentWorld* inputStudentWorld, int imageID = IID_PIT, Direction dir = 0, int depth = 1);
+
+	//doSomething
 	void doSomething();
 private:
 	int RegularSalmonellaInventory;
@@ -75,8 +91,11 @@ public:
 
 	virtual void doSomething();
 
+	//returns how sprays will do damage to dirtpiles
 	virtual bool sprayWillHarm();
 
+
+	//returns how flames will do damage to dirtpiles
 	virtual bool flameWillHarm();
 
 	virtual bool blocksBacteriumMovement() const;
@@ -93,7 +112,7 @@ public:
 
 	int getPositionalAngle();
 
-	void changePositionalAngle(int change);
+
 
 	int getNumOfSprayProjectiles();
 
@@ -214,6 +233,7 @@ class Bacteria : public ActorBaseClass
 {
 public:
 
+
 	Bacteria(double startX, double startY, StudentWorld* inputStudentWorld, int imageID, Direction dir = 90, int depth = 0, int inputHP = 4);
 	virtual bool sprayWillHarm();
 	virtual bool flameWillHarm();
@@ -222,7 +242,7 @@ public:
 	double newXAfter3Food(double inputX);
 	double newYAfter3Food(double inputY);
 	int getFoodEaten();
-
+	virtual ~Bacteria();
 	void movementPlanMoveForward3AvoidDirt();
 
 	void lookAndGoAfterFoodWithin128();

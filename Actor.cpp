@@ -100,32 +100,29 @@ void Pit::doSomething()
 		while (bacteriaSpawned == false)
 		{
 			chooseBacteriaToSpawn = randInt(1, 3);
-			cerr << "random Int for spawning bacteria was " << chooseBacteriaToSpawn << endl;
 			if ((chooseBacteriaToSpawn == 1) && (RegularSalmonellaInventory > 0))
 			{
 				getStudentWorld()->addToActorsVector(new Salmonella(getX(), getY(), getStudentWorld()));
+				//getStudentWorld()->modifyNumOfBacteria(1);
 				RegularSalmonellaInventory--;
 				bacteriaSpawned = true;
-				cerr << "Spawned Salmonella" << endl;
 			}
 			else if ((chooseBacteriaToSpawn == 2) && (AggressiveSalmonellaInventory > 0))
 			{
 				getStudentWorld()->addToActorsVector(new AggressiveSalmonella(getX(), getY(), getStudentWorld()));
+				//getStudentWorld()->modifyNumOfBacteria(1);
 				AggressiveSalmonellaInventory--;
 				bacteriaSpawned = true;
-				cerr << "Spawned Aggressive Salmonella" << endl;
 			}
 			else if ((chooseBacteriaToSpawn == 3) && (EColiInventory > 0))
 			{
 				getStudentWorld()->addToActorsVector(new EColi(getX(), getY(), getStudentWorld()));
+				//getStudentWorld()->modifyNumOfBacteria(1);
 				EColiInventory--;
 				bacteriaSpawned = true;
-				cerr << "Spawned EColi" << endl;
 			}
 		}
 		getStudentWorld()->playSound(SOUND_BACTERIUM_BORN);
-		getStudentWorld()->modifyNumOfBacteria(1);
-		cerr << "bacteria added, now: " << getStudentWorld()->getNumOfBacteria();
 	}
 
 }
@@ -147,11 +144,6 @@ int Socrates::getPositionalAngle()
 	return positionalAngle;
 }
 
-void Socrates::changePositionalAngle(int change)
-{
-	positionalAngle += change;
-	positionalAngle = positionalAngle % 360;
-}
 
 int Socrates::getNumOfSprayProjectiles()
 {
@@ -203,24 +195,20 @@ void Socrates::doSomething()
 		{
 
 			const double PI = 4 * atan(1);
-			double newX = 128 + (128 * cos((getPositionalAngle() + 5.000000000) * 1.0 / 360 * 2 * PI));
+			double newX = VIEW_RADIUS + (VIEW_RADIUS * cos((getDirection() + 180.00000 + 5.000000000) * 1.0 / 360 * 2 * PI));
 
-			double newY = 128 + (128 * sin((getPositionalAngle() + 5.000000000) * 1.0 / 360 * 2 * PI));
+			double newY = VIEW_RADIUS + (VIEW_RADIUS * sin((getDirection() + 180.00000 + 5.000000000) * 1.0 / 360 * 2 * PI));
 
 			moveTo(newX, newY);
-			changePositionalAngle(5);
-
 			setDirection(getDirection() + 5);
 		}
 		if (ch == KEY_PRESS_RIGHT)
 		{
 			const double PI = 4 * atan(1);
-			double newX = 128 + (128 * cos((getPositionalAngle() - 5.00000) * 1.0 / 360 * 2 * PI));
-			double newY = 128 + (128 * sin((getPositionalAngle() - 5.00000) * 1.0 / 360 * 2 * PI));
+			double newX = VIEW_RADIUS + (VIEW_RADIUS * cos((getDirection() + 180.00000 - 5.00000) * 1.0 / 360 * 2 * PI));
+			double newY = VIEW_RADIUS + (VIEW_RADIUS * sin((getDirection() + 180.00000 - 5.00000) * 1.0 / 360 * 2 * PI));
 
 			moveTo(newX, newY);
-			changePositionalAngle(-5);
-
 			setDirection(getDirection() - 5);
 		}
 
@@ -425,7 +413,6 @@ void GoodieBaseClass::trackAndDieIfExceedLifeTimeThenIncTick()
 	{
 		setAsDead();
 	}
-
 	lifetimeTicksTracker++;
 }
 
@@ -527,9 +514,17 @@ bool Fungus::flameWillHarm()
 Bacteria::Bacteria(double startX, double startY, StudentWorld* inputStudentWorld, int imageID, Direction dir, int depth, int inputHP)
 	:ActorBaseClass(imageID, startX, startY, dir, depth, inputStudentWorld, inputHP)
 {
+
+
 	foodEaten = 0;
 
+	getStudentWorld()->modifyNumOfBacteria(1);
 	movementPlanDistance = 0;
+}
+
+Bacteria::~Bacteria()
+{
+	getStudentWorld()->modifyNumOfBacteria(-1);
 }
 void Bacteria::modifyFoodEaten(int modifyAmount)
 {
@@ -586,11 +581,8 @@ void Bacteria::checkIfWentOverFoodAndIncrementIfSo()
 {
 	if (getStudentWorld()->wentOverFood(getX(), getY()))
 	{
-		cerr << "finally ate food" << endl;
 		modifyFoodEaten(+1);
-		cerr << "ate food" << endl;
 		return;
-		cerr << getFoodEaten() << endl;
 	}
 }
 
@@ -659,7 +651,7 @@ void Bacteria::lookAndGoAfterFoodWithin128()
 	}
 }
 AggressiveSalmonella::AggressiveSalmonella(double startX, double startY, StudentWorld* inputStudentWorld, int imageID, Direction dir, int depth, int inputHP)
-	:Bacteria(startX, startY, inputStudentWorld, imageID, dir, depth, inputHP)
+	:Bacteria(startX, startY, inputStudentWorld, IID_FLAME, dir, depth, inputHP)	//TODO:change back to imageID
 {}
 
 void AggressiveSalmonella::modifyHP(int modifyAmount)
@@ -670,12 +662,12 @@ void AggressiveSalmonella::modifyHP(int modifyAmount)
 		{
 			getStudentWorld()->playSound(SOUND_SALMONELLA_HURT);
 		}
-		else
+		else if(getHP() + modifyAmount <= 0)
 		{
 			getStudentWorld()->playSound(SOUND_SALMONELLA_DIE);
 			cerr << "bacteria died, current num of bac: " << getStudentWorld()->getNumOfBacteria();
 			getStudentWorld()->increaseScore(100);
-			getStudentWorld()->modifyNumOfBacteria(-1);
+			//getStudentWorld()->modifyNumOfBacteria(-1);
 		}
 	}
 	ActorBaseClass::modifyHP(modifyAmount);
@@ -719,7 +711,7 @@ void AggressiveSalmonella::doSomething()
 			int newX = newXAfter3Food(getX());
 			int newY = newYAfter3Food(getY());
 			getStudentWorld()->addToActorsVector(new AggressiveSalmonella(newX, newY, getStudentWorld()));
-			getStudentWorld()->modifyNumOfBacteria(1);
+			//getStudentWorld()->modifyNumOfBacteria(1);
 			modifyFoodEaten(-1 * getFoodEaten());
 			hasDividedThisTick = true;
 		}
@@ -738,6 +730,7 @@ void AggressiveSalmonella::doSomething()
 	if (getMovementPlanDistance() > 0 && !chasedAfterSocrates)
 	{
 		movementPlanMoveForward3AvoidDirt();
+		cerr << "movedForward3withDirt Consideration" << end;
 	}
 	else
 	{
@@ -764,7 +757,7 @@ void Salmonella::modifyHP(int modifyAmount)
 			getStudentWorld()->playSound(SOUND_SALMONELLA_DIE);
 			cerr << "bacteria died, current num of bac: " << getStudentWorld()->getNumOfBacteria();
 			getStudentWorld()->increaseScore(100);
-			getStudentWorld()->modifyNumOfBacteria(-1);
+			//getStudentWorld()->modifyNumOfBacteria(-1);
 		}
 	}
 	ActorBaseClass::modifyHP(modifyAmount);
@@ -785,7 +778,7 @@ void Salmonella::doSomething()
 			int newX = newXAfter3Food(getX());
 			int newY = newYAfter3Food(getY());
 			getStudentWorld()->addToActorsVector(new Salmonella(newX, newY, getStudentWorld()));
-			getStudentWorld()->modifyNumOfBacteria(1);
+			//getStudentWorld()->modifyNumOfBacteria(1);
 			modifyFoodEaten(-3);
 			hasDividedThisTick = true;
 		}
@@ -828,7 +821,7 @@ void EColi::modifyHP(int modifyAmount)
 		{
 			getStudentWorld()->playSound(SOUND_ECOLI_DIE);
 			getStudentWorld()->increaseScore(100);
-			getStudentWorld()->modifyNumOfBacteria(-1);
+			//getStudentWorld()->modifyNumOfBacteria(-1);
 			cerr << "bacteria died, current num of bac: " << getStudentWorld()->getNumOfBacteria();
 		}
 	}
@@ -853,7 +846,7 @@ void EColi::doSomething()
 			int newY = newYAfter3Food(getY());
 			EColi* newEColi = new EColi(newX, newY, getStudentWorld());
 			getStudentWorld()->addToActorsVector(newEColi);
-			getStudentWorld()->modifyNumOfBacteria(1);
+			//getStudentWorld()->modifyNumOfBacteria(1);
 			modifyFoodEaten(-1 * getFoodEaten());
 			hasDividedThisTick = true;
 		}
