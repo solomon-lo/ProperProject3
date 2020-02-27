@@ -83,7 +83,7 @@ Pit::Pit(double startX, double startY, StudentWorld* inputStudentWorld, int imag
 
 void Pit::doSomething()
 {
-	if (RegularSalmonellaInventory + AggressiveSalmonellaInventory + EColiInventory == 0)
+	if ((RegularSalmonellaInventory + AggressiveSalmonellaInventory + EColiInventory) == 0)
 	{
 		modifyHP(-5);
 		setAsDead();
@@ -92,29 +92,36 @@ void Pit::doSomething()
 	SetAsDeadIfLessThan0HP();
 
 	int randomNumberFromOneToFifty = randInt(1, 50);
-	if (randomNumberFromOneToFifty == 1)
+	if (randomNumberFromOneToFifty == 10)
 	{
+
+		int chooseBacteriaToSpawn;
 		bool bacteriaSpawned = false;
-		int chooseBacteriaToSpawn = randInt(1, 3);
+
 		while (bacteriaSpawned == false)
 		{
-			if ((randomNumberFromOneToFifty == 1) && (RegularSalmonellaInventory > 0))
+			chooseBacteriaToSpawn = randInt(1, 3);
+			cerr << "random Int for spawning bacteria was " << chooseBacteriaToSpawn << endl;
+			if ((chooseBacteriaToSpawn == 1) && (RegularSalmonellaInventory > 0))
 			{
 				getStudentWorld()->addToActorsVector(new Salmonella(getX(), getY(), getStudentWorld()));
 				RegularSalmonellaInventory--;
 				bacteriaSpawned = true;
+				cerr << "Spawned Salmonella" << endl;
 			}
-			if ((randomNumberFromOneToFifty == 2) && (AggressiveSalmonellaInventory > 0))
+			else if ((chooseBacteriaToSpawn == 2) && (AggressiveSalmonellaInventory > 0))
 			{
-				getStudentWorld()->addToActorsVector(new Salmonella(getX(), getY(), getStudentWorld()));
+				getStudentWorld()->addToActorsVector(new AggressiveSalmonella(getX(), getY(), getStudentWorld()));
 				AggressiveSalmonellaInventory--;
 				bacteriaSpawned = true;
+				cerr << "Spawned Aggressive Salmonella" << endl;
 			}
-			if ((randomNumberFromOneToFifty == 3) && (EColiInventory > 0))
+			else if ((chooseBacteriaToSpawn == 3) && (EColiInventory > 0))
 			{
-				getStudentWorld()->addToActorsVector(new Salmonella(getX(), getY(), getStudentWorld()));
+				getStudentWorld()->addToActorsVector(new EColi(getX(), getY(), getStudentWorld()));
 				EColiInventory--;
 				bacteriaSpawned = true;
+				cerr << "Spawned EColi" << endl;
 			}
 		}
 		getStudentWorld()->playSound(SOUND_BACTERIUM_BORN);

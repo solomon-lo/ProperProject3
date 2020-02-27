@@ -21,34 +21,34 @@ StudentWorld::StudentWorld(string assetPath)
 int StudentWorld::init()
 {
 
-	//for (int i = 0; i < getLevel(); i++)
-	//{
-	//	int randomPitX = 0;
-	//	int randomPitY = 0;
-	//	while (getEuclideanDistance(randomPitX, randomPitY, (VIEW_WIDTH / 2), (VIEW_HEIGHT / 2)) > 120.00)
-	//	{
-	//		randomPitX = randInt((VIEW_WIDTH / 2) - 120, (VIEW_WIDTH / 2) + 120);
-	//		randomPitY = randInt((VIEW_HEIGHT / 2) - 120, (VIEW_HEIGHT / 2) + 120);
-	//	}
-	//	bool overlappedWithSomething = false;
-	//	vector<ActorBaseClass*>::iterator it;
-	//	for (it = ActorsVector.begin(); it != ActorsVector.end(); it++)
-	//	{
-	//		double distanceToCenterActor = getEuclideanDistance(randomPitX, randomPitY, (*it)->getX(), (*it)->getY());
-	//		if ((distanceToCenterActor <= 8 || ((*it)->blocksBacteriumMovement())))
-	//		{
-	//			overlappedWithSomething = true;
-	//			break;
-	//		}
-	//	}
-	//	if (overlappedWithSomething)
-	//	{
-	//		i--;
-	//		continue;
-	//	}
-	//	Pit* newPit = new Pit(randomPitX, randomPitY, this);
-	//	addToActorsVector(newPit);
-	//}
+	for (int i = 0; i < getLevel(); i++)
+	{
+		int randomPitX = 0;
+		int randomPitY = 0;
+		while (getEuclideanDistance(randomPitX, randomPitY, (VIEW_WIDTH / 2), (VIEW_HEIGHT / 2)) > 120.00)
+		{
+			randomPitX = randInt((VIEW_WIDTH / 2) - 120, (VIEW_WIDTH / 2) + 120);
+			randomPitY = randInt((VIEW_HEIGHT / 2) - 120, (VIEW_HEIGHT / 2) + 120);
+		}
+		bool overlappedWithSomething = false;
+		vector<ActorBaseClass*>::iterator it;
+		for (it = ActorsVector.begin(); it != ActorsVector.end(); it++)
+		{
+			double distanceToCenterActor = getEuclideanDistance(randomPitX, randomPitY, (*it)->getX(), (*it)->getY());
+			if ((distanceToCenterActor <= 8 || ((*it)->blocksBacteriumMovement())))
+			{
+				overlappedWithSomething = true;
+				break;
+			}
+		}
+		if (overlappedWithSomething)
+		{
+			i--;
+			continue;
+		}
+		Pit* newPit = new Pit(randomPitX, randomPitY, this);
+		addToActorsVector(newPit);
+	}
 
 
 	//adding food to the StudentWorld
