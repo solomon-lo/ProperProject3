@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath>
 #include <sstream>
+#include <iomanip>
 using namespace std;
 //class ActorBaseClass;
 
@@ -371,17 +372,32 @@ bool StudentWorld::isThisCoordinateFilled(double testX, double textY)
 
 
 void StudentWorld::updateDisplayText()
-{
-	int score = getScore();
-	int level = getLevel();
-	int lives = getLives();
-	int health = getPlayerObjectHealth();
-	int sprays = getPlayerObjectSpraysLeft();
-	int flames = getPlayerObjectFlamesLeft();
-
+{	
 	ostringstream oss;
 
-	oss << "Score: " << score << " Level: " << level << " Lives: " << lives << " Health " << health << " Sprays: " << sprays << " Flames: " << flames;
+	oss << "  Score: ";
+	oss.fill('0');
+	if (getScore() < 0)
+	{
+		oss << "-";
+		oss << setw(5) << -1 * getScore();
+	}
+	else
+	{
+		oss << setw(6) << getScore();
+	}
+	oss << "  Level:  ";
+	oss << setw(1) << getLevel();
+	oss << "  Lives:  ";
+	oss << setw(1) << getLives();
+	oss << "  Health:  ";
+	oss << setw(3) << getPlayerObjectHealth();
+	oss << "  Sprays:  ";
+	oss << setw(2) << getPlayerObjectSpraysLeft();
+	oss << "  Flames:  ";
+	oss << setw(1) << getPlayerObjectFlamesLeft();
+
+	//oss << "Score: " << score << " Level: " << level << " Lives: " << lives << " Health " << health << " Sprays: " << sprays << " Flames: " << flames;
 
 	string text = oss.str();
 	setGameStatText(text);

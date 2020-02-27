@@ -1,4 +1,3 @@
 ﻿  StudentWorld.cpp
-C:\Users\Public\Kontagion\Kontagion\StudentWorld.cpp(261,16): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\StudentWorld.cpp(378,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Public\Kontagion\Kontagion\StudentWorld.cpp(262,16): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
   Kontagion.vcxproj -> C:\Users\Public\Kontagion\Debug\Kontagion.exe
