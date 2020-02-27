@@ -155,6 +155,17 @@ int StudentWorld::init()
 
 int StudentWorld::move()
 {
+	if (playerObject->getHP() <= 0 || playerObject->getAliveStatus() == false)
+	{
+		return GWSTATUS_PLAYER_DIED;
+		decLives();
+	}
+
+	if (numOfPits == 0 && numOfBacteria == 0)
+	{
+		return GWSTATUS_FINISHED_LEVEL;
+	}
+	removeDeadActors();
 	// This code is here merely to allow the game to build, run, and terminate after you hit enter.
 	// Notice that the return value GWSTATUS_PLAYER_DIED will cause our framework to end the current level.
 	playerObject->doSomething();
@@ -164,19 +175,45 @@ int StudentWorld::move()
 		(*it)->doSomething();
 	}
 
-	removeDeadActors();
+	
 	double fixed_health_num = getPlayerObjectHealth();
 	setGameStatText("Score: " + to_string(getScore()) + " Level: " + to_string(getLevel()) + " Lives: " + to_string(getLives()) + " Health: " + to_string(fixed_health_num) + " Sprays: " + to_string(getPlayerObjectSpraysLeft()) + " Flames: " + to_string(getPlayerObjectFlamesLeft()));
 
-	if (playerObject->getHP() <= 0 || playerObject->getAliveStatus() == false)
+	////spawning new goodies
+	int chanceFungus = max(510 - getLevel() * 10, 200);
+	int fungusRandomNumber = randInt(0, chanceFungus);
+	if (fungusRandomNumber == 0)
 	{
-		return GWSTATUS_PLAYER_DIED;
-		decLives();
+		const double PI = 4 * atan(1);
+		int randomDegree = randInt(0, 359);
+		double fungusX = (VIEW_WIDTH / 2) + (128 * cos(randomDegree * 1.0 / 360 * 2 * PI));
+		double fungusY = (VIEW_HEIGHT / 2) + (128 * sin(randomDegree * 1.0 / 360 * 2 * PI));
+		ActorsVector.push_back(new Fungus(fungusX, fungusY, this));
 	}
-	if (numOfPits == 0 && numOfBacteria == 0)
+
+	int chanceGoodie = max(510 - getLevel() * 10, 250);
+	int goodieRandomNumber = randInt(0, chanceGoodie);
+	if (goodieRandomNumber == 0)
 	{
-		return GWSTATUS_FINISHED_LEVEL;
+		const double PI = 4 * atan(1);
+		int randomDegree = randInt(0, 359);
+		double goodieX = (VIEW_WIDTH / 2) + (128 * cos(randomDegree * 1.0 / 360 * 2 * PI));
+		double goodieY = (VIEW_HEIGHT / 2) + (128 * sin(randomDegree * 1.0 / 360 * 2 * PI));
+		int goodieSelector = randInt(1, 10);
+		if (goodieSelector == 1)
+		{
+			ActorsVector.push_back(new ExtraLifeGoodie(goodieX, goodieY, this));
+		}
+		else if (goodieSelector >= 2 && goodieSelector <= 4)
+		{
+			ActorsVector.push_back(new FlameThrowerGoodie(goodieX, goodieY, this));
+		}
+		else
+		{
+			ActorsVector.push_back(new RestoreHealthGoodie(goodieX, goodieY, this));
+		}
 	}
+
 
 	return GWSTATUS_CONTINUE_GAME;
 }
@@ -200,7 +237,7 @@ void StudentWorld::removeDeadActors()
 	vector<ActorBaseClass*>::iterator it;
 	for (it = ActorsVector.begin(); it != ActorsVector.end(); )
 	{
-		if ((*it)->getAliveStatus() == false)
+		if ((*it)->getAliveStatus() == false || (*it)->getHP() <=0)
 		{
 			delete* it;
 			it = ActorsVector.erase(it);
