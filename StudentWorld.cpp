@@ -391,12 +391,26 @@ void StudentWorld::updateDisplayText()
 	oss << "  Lives:  ";
 	oss << setw(1) << getLives();
 	oss << "  Health:  ";
-	oss << setw(3) << getPlayerObjectHealth();
+	if (getPlayerObjectHealth() >= 100)
+	{
+		oss << setw(3) << getPlayerObjectHealth();
+	}
+	else
+	{
+		oss << setw(2) << getPlayerObjectHealth();
+	}
+	
 	oss << "  Sprays:  ";
 	oss << setw(2) << getPlayerObjectSpraysLeft();
 	oss << "  Flames:  ";
-	oss << setw(1) << getPlayerObjectFlamesLeft();
-
+	if (getPlayerObjectFlamesLeft() >= 10)
+	{
+		oss << setw(2) << getPlayerObjectFlamesLeft();
+	}
+	else
+	{
+		oss << setw(1) << getPlayerObjectFlamesLeft();
+	}
 	//oss << "Score: " << score << " Level: " << level << " Lives: " << lives << " Health " << health << " Sprays: " << sprays << " Flames: " << flames;
 
 	string text = oss.str();

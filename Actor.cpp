@@ -885,6 +885,5 @@ void EColi::doSomething()
 			return;
 		}
 		//TODO:IS THIS THE RIGHT WAY?
-
 	}
 }
