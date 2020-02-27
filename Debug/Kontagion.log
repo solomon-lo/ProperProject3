@@ -1,36 +1,3 @@
-﻿  Actor.cpp
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(172,15): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(297,69): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(297,61): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(322,69): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(322,61): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(380,27): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(555,50): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(555,42): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(584,160): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(584,153): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(609,30): warning C4244: 'argument': conversion from 'double' to 'Direction', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(610,199): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(610,179): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(618,17): warning C4244: 'argument': conversion from 'double' to 'Direction', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(654,31): warning C4244: 'argument': conversion from 'double' to 'Direction', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(655,214): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(655,190): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(657,18): warning C4244: 'argument': conversion from 'double' to 'Direction', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(658,15): warning C4244: 'argument': conversion from 'double' to 'Direction', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(669,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(670,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(641,9): warning C4101: 'tempYDistance': unreferenced local variable
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(640,9): warning C4101: 'tempXDistance': unreferenced local variable
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(716,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(717,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(733,9): warning C4101: 'possibleFoodY': unreferenced local variable
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(732,9): warning C4101: 'possibleFoodX': unreferenced local variable
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(763,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(764,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(790,30): warning C4244: 'argument': conversion from 'double' to 'Direction', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(791,205): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(791,184): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(793,17): warning C4244: 'argument': conversion from 'double' to 'Direction', possible loss of data
-C:\Users\Public\Kontagion\Kontagion\Actor.cpp(794,14): warning C4244: 'argument': conversion from 'double' to 'Direction', possible loss of data
+﻿  StudentWorld.cpp
+C:\Users\Public\Kontagion\Kontagion\StudentWorld.cpp(214,16): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
   Kontagion.vcxproj -> C:\Users\Public\Kontagion\Debug\Kontagion.exe

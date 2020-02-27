@@ -85,11 +85,10 @@ void Pit::doSomething()
 {
 	if ((RegularSalmonellaInventory + AggressiveSalmonellaInventory + EColiInventory) == 0)
 	{
+		getStudentWorld()->modifyNumOfPits(-1);
 		modifyHP(-5);
 		setAsDead();
 	}
-
-	SetAsDeadIfLessThan0HP();
 
 	int randomNumberFromOneToFifty = randInt(1, 50);
 	if (randomNumberFromOneToFifty == 10)
@@ -107,6 +106,7 @@ void Pit::doSomething()
 				getStudentWorld()->addToActorsVector(new Salmonella(getX(), getY(), getStudentWorld()));
 				RegularSalmonellaInventory--;
 				bacteriaSpawned = true;
+				getStudentWorld()->modifyNumOfBacteria(1);
 				cerr << "Spawned Salmonella" << endl;
 			}
 			else if ((chooseBacteriaToSpawn == 2) && (AggressiveSalmonellaInventory > 0))
@@ -114,6 +114,7 @@ void Pit::doSomething()
 				getStudentWorld()->addToActorsVector(new AggressiveSalmonella(getX(), getY(), getStudentWorld()));
 				AggressiveSalmonellaInventory--;
 				bacteriaSpawned = true;
+				getStudentWorld()->modifyNumOfBacteria(1);
 				cerr << "Spawned Aggressive Salmonella" << endl;
 			}
 			else if ((chooseBacteriaToSpawn == 3) && (EColiInventory > 0))
@@ -121,10 +122,12 @@ void Pit::doSomething()
 				getStudentWorld()->addToActorsVector(new EColi(getX(), getY(), getStudentWorld()));
 				EColiInventory--;
 				bacteriaSpawned = true;
+				getStudentWorld()->modifyNumOfBacteria(1);
 				cerr << "Spawned EColi" << endl;
 			}
 		}
 		getStudentWorld()->playSound(SOUND_BACTERIUM_BORN);
+		getStudentWorld()->modifyNumOfBacteria(1);
 	}
 
 }
@@ -171,6 +174,22 @@ void Socrates::restoreSocratesFullHP()
 {
 	modifyHP(100 - getHP());
 }
+void Socrates::modifyHP(int modifyAmount)
+{
+	if (modifyAmount < 0)
+	{
+		if (getHP() + modifyAmount <= 0)
+		{
+			getStudentWorld()->playSound(SOUND_PLAYER_DIE);
+		}
+		else
+		{
+			getStudentWorld()->playSound(SOUND_PLAYER_HURT);
+		}
+	}
+	ActorBaseClass::modifyHP(modifyAmount);
+}
+
 
 void Socrates::doSomething()
 {
@@ -488,6 +507,16 @@ void Fungus::doSomething()
 	trackAndDieIfExceedLifeTimeThenIncTick();
 }
 
+bool Fungus::sprayWillHarm()
+{
+	return true;
+}
+
+bool Fungus::flameWillHarm()
+{
+	return true;
+}
+
 //Bacteria Implementation
 
 Bacteria::Bacteria(double startX, double startY, StudentWorld* inputStudentWorld, int imageID, Direction dir, int depth, int inputHP)
@@ -524,13 +553,11 @@ double Bacteria::newYAfter3Food(double inputY)
 
 bool Bacteria::sprayWillHarm()
 {
-	modifyHP(-2);
 	return true;
 }
 
 bool Bacteria::flameWillHarm()
 {
-	modifyHP(-5);
 	return true;
 }
 
@@ -630,6 +657,22 @@ AggressiveSalmonella::AggressiveSalmonella(double startX, double startY, Student
 	:Bacteria(startX, startY, inputStudentWorld, imageID, dir, depth, inputHP)
 {}
 
+void AggressiveSalmonella::modifyHP(int modifyAmount)
+{
+	if (modifyAmount < 0)
+	{
+		if (getHP() + modifyAmount > 0)
+		{
+			getStudentWorld()->playSound(SOUND_SALMONELLA_HURT);
+		}
+		else
+		{
+			getStudentWorld()->playSound(SOUND_SALMONELLA_DIE);
+			getStudentWorld()->modifyNumOfBacteria(-1);
+		}
+	}
+	ActorBaseClass::modifyHP(modifyAmount);
+}
 void AggressiveSalmonella::doSomething()
 {
 	SetAsDeadIfLessThan0HP();
@@ -698,7 +741,23 @@ void AggressiveSalmonella::doSomething()
 }
 Salmonella::Salmonella(double startX, double startY, StudentWorld* inputStudentWorld, int imageID, Direction dir, int depth, int inputHP)
 	:Bacteria(startX, startY, inputStudentWorld, imageID, dir, 0, IID_SALMONELLA)
+{}
+
+void Salmonella::modifyHP(int modifyAmount)
 {
+	if (modifyAmount < 0)
+	{
+		if (getHP() + modifyAmount > 0)
+		{
+			getStudentWorld()->playSound(SOUND_SALMONELLA_HURT);
+		}
+		else
+		{
+			getStudentWorld()->playSound(SOUND_SALMONELLA_DIE);
+			getStudentWorld()->modifyNumOfBacteria(-1);
+		}
+	}
+	ActorBaseClass::modifyHP(modifyAmount);
 }
 void Salmonella::doSomething()
 {
@@ -745,6 +804,23 @@ void Salmonella::doSomething()
 EColi::EColi(double startX, double startY, StudentWorld* inputStudentWorld, int imageID, Direction dir, int depth, int inputHP)
 	:Bacteria(startX, startY, inputStudentWorld, imageID, dir, depth, inputHP)
 {}
+
+void EColi::modifyHP(int modifyAmount)
+{
+	if (modifyAmount < 0)
+	{
+		if (getHP() + modifyAmount > 0)
+		{
+			getStudentWorld()->playSound(SOUND_ECOLI_HURT);
+		}
+		else
+		{
+			getStudentWorld()->playSound(SOUND_ECOLI_DIE);
+			getStudentWorld()->modifyNumOfBacteria(-1);
+		}
+	}
+	ActorBaseClass::modifyHP(modifyAmount);
+}
 
 
 void EColi::doSomething()

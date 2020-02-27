@@ -16,10 +16,24 @@ GameWorld* createStudentWorld(string assetPath)
 StudentWorld::StudentWorld(string assetPath)
 	: GameWorld(assetPath)
 {
+	numOfPits = 0;
+	numOfBacteria = 0;
+}
+
+void StudentWorld::modifyNumOfPits(int modifyAmount)
+{
+	numOfPits += modifyAmount;
+}
+
+void StudentWorld::modifyNumOfBacteria(int modifyAmount)
+{
+	numOfBacteria+= modifyAmount;
 }
 
 int StudentWorld::init()
 {
+
+	playerObject = new Socrates(this);
 
 	for (int i = 0; i < getLevel(); i++)
 	{
@@ -35,7 +49,7 @@ int StudentWorld::init()
 		for (it = ActorsVector.begin(); it != ActorsVector.end(); it++)
 		{
 			double distanceToCenterActor = getEuclideanDistance(randomPitX, randomPitY, (*it)->getX(), (*it)->getY());
-			if ((distanceToCenterActor <= 8 || ((*it)->blocksBacteriumMovement())))
+			if ((distanceToCenterActor < SPRITE_RADIUS * 2))
 			{
 				overlappedWithSomething = true;
 				break;
@@ -46,6 +60,7 @@ int StudentWorld::init()
 			i--;
 			continue;
 		}
+		modifyNumOfPits(1);
 		Pit* newPit = new Pit(randomPitX, randomPitY, this);
 		addToActorsVector(newPit);
 	}
@@ -66,7 +81,7 @@ int StudentWorld::init()
 		for (it = ActorsVector.begin(); it != ActorsVector.end(); it++)
 		{
 			double distanceToCenterActor = getEuclideanDistance(randomFoodX, randomFoodY, (*it)->getX(), (*it)->getY());
-			if ((distanceToCenterActor <= 8)) //|| ((*it)->blocksBacteriumMovement()))
+			if ((distanceToCenterActor < 2 * SPRITE_RADIUS))
 			{
 				overlappedWithSomething = true;
 				break;
@@ -97,35 +112,9 @@ int StudentWorld::init()
 	}
 
 	addToActorsVector(new Salmonella(120, 120, this));
-	//init a goodie(MUST BE REMOVED, THIS IS FOR TESTING ONLY)
 	const double PI = 4 * atan(1);
-	//THE 90 WILL BE REPLACED WITH A RANDOM NUMBER FROM 0 TO 360
 	double goodieX = (VIEW_WIDTH / 2) + (128 * cos(175 * 1.0 / 360 * 2 * PI));
-	//cerr << "getpositionalnagle is" << getPositionalAngle() << endl;
-	//cerr << "newX is" << newX << endl;
 	double goodieY = (VIEW_HEIGHT / 2) + (128 * sin(175 * 1.0 / 360 * 2 * PI));
-	ActorsVector.push_back(new Food(50, 50, this));
-	//ActorsVector.push_back(new Food(95, 118, this));
-	ActorsVector.push_back(new Food(80, 80, this));
-	ActorsVector.push_back(new Food(132, 132, this));
-
-	ActorsVector.push_back(new AggressiveSalmonella(128, 128, this, IID_FLAME));
-	ActorsVector.push_back(new AggressiveSalmonella(75, 75, this, IID_FLAME));
-	ActorsVector.push_back(new AggressiveSalmonella(128, 128, this, IID_FLAME));
-	ActorsVector.push_back(new AggressiveSalmonella(75, 75, this, IID_FLAME));
-
-	ActorsVector.push_back(new Salmonella(128, 128, this));
-	ActorsVector.push_back(new Salmonella(75, 75, this));
-	ActorsVector.push_back(new Salmonella(128, 128, this));
-	ActorsVector.push_back(new Salmonella(75, 75, this));
-
-	ActorsVector.push_back(new EColi(100, 128, this));
-	ActorsVector.push_back(new EColi(75, 90, this));
-	ActorsVector.push_back(new EColi(200, 128, this));
-	ActorsVector.push_back(new EColi(75, 75, this));
-
-	//ActorsVector.push_back(new Salmonella(100, 100, this));
-
 	double flameX = (VIEW_WIDTH / 2) + (128 * cos(160 * 1.0 / 360 * 2 * PI));
 	double flameY = (VIEW_HEIGHT / 2) + (128 * sin(160 * 1.0 / 360 * 2 * PI));
 	ActorsVector.push_back(new FlameThrowerGoodie(flameX, flameY, this));
@@ -138,7 +127,8 @@ int StudentWorld::init()
 	double fungusX = (VIEW_WIDTH / 2) + (128 * cos(185 * 1.0 / 360 * 2 * PI));
 	double fungusY = (VIEW_HEIGHT / 2) + (128 * sin(185 * 1.0 / 360 * 2 * PI));
 	ActorsVector.push_back(new Fungus(fungusX, fungusY, this));
-	playerObject = new Socrates(this);
+
+
 
 	//init food items
 	return GWSTATUS_CONTINUE_GAME;
@@ -159,6 +149,15 @@ int StudentWorld::move()
 	removeDeadActors();
 	double fixed_health_num = getPlayerObjectHealth();
 	setGameStatText("Score: " + to_string(getScore()) + " Level: " + to_string(getLevel()) + " Lives: " + to_string(getLives()) + " Health: " + to_string(fixed_health_num) + " Sprays: " + to_string(getPlayerObjectSpraysLeft()) + " Flames: " + to_string(getPlayerObjectFlamesLeft()));
+
+	if (playerObject->getHP() <= 0 || playerObject->getAliveStatus() == false)
+	{
+		return GWSTATUS_PLAYER_DIED;
+	}
+	if (numOfPits == 0 && numOfBacteria == 0)
+	{
+		return GWSTATUS_FINISHED_LEVEL;
+	}
 
 	return GWSTATUS_CONTINUE_GAME;
 }
@@ -241,6 +240,7 @@ bool StudentWorld::wentOverSprayableObject(int centerActorX, int centerActorY)
 		{
 			if ((*it)->sprayWillHarm() == true)
 			{
+				(*it)->modifyHP(-2);
 				return true;
 			}
 		}

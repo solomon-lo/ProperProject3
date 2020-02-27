@@ -45,10 +45,15 @@ public:
 	void fungusEffect();
 	bool findFoodWithin128(double bacteriaX, double bacteriaY, double& foodX, double& foodY);
 	bool findSocratesWithinDistance(double bacteriaX, double bacteriaY, double& SocratesX, double& SocratesY, int inputDistance);
+	void modifyNumOfPits(int modifyAmount);
+	void modifyNumOfBacteria(int modifyAmount);
 
 private:
 	Socrates* playerObject;
 	std::vector<ActorBaseClass*> ActorsVector;
+
+	int numOfPits;
+	int numOfBacteria;
 
 };
 

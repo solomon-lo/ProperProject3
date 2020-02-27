@@ -103,6 +103,8 @@ public:
 
 	virtual void restoreSocratesFullHP();
 
+	virtual void modifyHP(int modifyAmount);
+
 
 
 private:
@@ -203,6 +205,9 @@ public:
 	Fungus(double startX, double startY, StudentWorld* inputStudentWorld, int imageID = IID_FUNGUS, Direction dir = 0, int depth = 1);
 
 	void doSomething();
+
+	bool flameWillHarm();
+	bool sprayWillHarm();
 };
 
 class Bacteria : public ActorBaseClass
@@ -239,6 +244,7 @@ public:
 
 	Salmonella(double startX, double startY, StudentWorld* inputStudentWorld, int imageID = IID_SALMONELLA, Direction dir = 90, int depth = 0, int inputHP = 4);
 	void doSomething();
+	virtual void modifyHP(int modifyAmount);
 };
 
 class AggressiveSalmonella : public Bacteria
@@ -246,12 +252,14 @@ class AggressiveSalmonella : public Bacteria
 public:
 	AggressiveSalmonella(double startX, double startY, StudentWorld* inputStudentWorld, int imageID = IID_SALMONELLA, Direction dir = 90, int depth = 0, int inputHP = 10);
 	void doSomething();
+	virtual void modifyHP(int modifyAmount);
 };
 
 class EColi : public Bacteria
 {
 public:
 	EColi(double startX, double startY, StudentWorld* inputStudentWorld, int imageID = IID_ECOLI, Direction dir = 90, int depth = 0, int inputHP = 5);
+	virtual void modifyHP(int modifyAmount);
 	void doSomething();
 
 };
