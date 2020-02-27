@@ -96,42 +96,60 @@ int StudentWorld::init()
 		addToActorsVector(newFood);
 	}
 
+	//ADDING DIRTPILES
 	int numOfDirtPiles = max(180 - 20 * getLevel(), 20);
 	for (int i = 0; i < numOfDirtPiles; i++)
 	{
-		int randomX = 0;
-		int randomY = 0;
-		while (sqrt((randomX - (VIEW_WIDTH / 2)) * (randomX - (VIEW_WIDTH / 2)) + (randomY - (VIEW_HEIGHT / 2)) * (randomY - (VIEW_HEIGHT / 2))) > 120)
+		int randomDirtX = 0;
+		int randomDirtY = 0;
+		while (getEuclideanDistance(randomDirtX, randomDirtY, (VIEW_WIDTH / 2), (VIEW_HEIGHT / 2)) > 120.00)
 		{
-
-			randomX = randInt((VIEW_WIDTH / 2) - 120, (VIEW_WIDTH / 2) + 120);
-			randomY = randInt((VIEW_HEIGHT / 2) - 120, (VIEW_HEIGHT / 2) + 120);
+			randomDirtX = randInt((VIEW_WIDTH / 2) - 120, (VIEW_WIDTH / 2) + 120);
+			randomDirtY = randInt((VIEW_HEIGHT / 2) - 120, (VIEW_HEIGHT / 2) + 120);
 		}
-		DirtPile* newDirtPile = new DirtPile(randomX, randomY, this);
-		ActorsVector.push_back(newDirtPile);
+		bool overlappedWithSomething = false;
+		vector<ActorBaseClass*>::iterator it;
+		for (it = ActorsVector.begin(); it != ActorsVector.end(); it++)
+		{
+			double distanceToCenterActor = getEuclideanDistance(randomDirtX, randomDirtY, (*it)->getX(), (*it)->getY());
+			if ((distanceToCenterActor < 2 * SPRITE_RADIUS))
+			{
+				if ((*it)->blocksBacteriumMovement() == false)
+				{
+					overlappedWithSomething = true;
+					break;
+				}
+			}
+		}
+		if (overlappedWithSomething)
+		{
+			i--;
+			continue;
+		}
+		DirtPile* newDirt = new DirtPile(randomDirtX, randomDirtY, this);
+		addToActorsVector(newDirt);
 	}
+		addToActorsVector(new Salmonella(120, 120, this));
+		const double PI = 4 * atan(1);
+		double goodieX = (VIEW_WIDTH / 2) + (128 * cos(175 * 1.0 / 360 * 2 * PI));
+		double goodieY = (VIEW_HEIGHT / 2) + (128 * sin(175 * 1.0 / 360 * 2 * PI));
+		double flameX = (VIEW_WIDTH / 2) + (128 * cos(160 * 1.0 / 360 * 2 * PI));
+		double flameY = (VIEW_HEIGHT / 2) + (128 * sin(160 * 1.0 / 360 * 2 * PI));
+		ActorsVector.push_back(new FlameThrowerGoodie(flameX, flameY, this));
 
-	addToActorsVector(new Salmonella(120, 120, this));
-	const double PI = 4 * atan(1);
-	double goodieX = (VIEW_WIDTH / 2) + (128 * cos(175 * 1.0 / 360 * 2 * PI));
-	double goodieY = (VIEW_HEIGHT / 2) + (128 * sin(175 * 1.0 / 360 * 2 * PI));
-	double flameX = (VIEW_WIDTH / 2) + (128 * cos(160 * 1.0 / 360 * 2 * PI));
-	double flameY = (VIEW_HEIGHT / 2) + (128 * sin(160 * 1.0 / 360 * 2 * PI));
-	ActorsVector.push_back(new FlameThrowerGoodie(flameX, flameY, this));
+		//double extraLifeX = (VIEW_WIDTH / 2) + (128 * cos(185 * 1.0 / 360 * 2 * PI));
+		//double extraLifeY = (VIEW_HEIGHT / 2) + (128 * sin(185 * 1.0 / 360 * 2 * PI));
+		//ActorsVector.push_back(new ExtraLifeGoodie(extraLifeX, extraLifeY, this));
+		//playerObject = new Socrates(this);
 
-	//double extraLifeX = (VIEW_WIDTH / 2) + (128 * cos(185 * 1.0 / 360 * 2 * PI));
-	//double extraLifeY = (VIEW_HEIGHT / 2) + (128 * sin(185 * 1.0 / 360 * 2 * PI));
-	//ActorsVector.push_back(new ExtraLifeGoodie(extraLifeX, extraLifeY, this));
-	//playerObject = new Socrates(this);
-
-	double fungusX = (VIEW_WIDTH / 2) + (128 * cos(185 * 1.0 / 360 * 2 * PI));
-	double fungusY = (VIEW_HEIGHT / 2) + (128 * sin(185 * 1.0 / 360 * 2 * PI));
-	ActorsVector.push_back(new Fungus(fungusX, fungusY, this));
-
+		double fungusX = (VIEW_WIDTH / 2) + (128 * cos(185 * 1.0 / 360 * 2 * PI));
+		double fungusY = (VIEW_HEIGHT / 2) + (128 * sin(185 * 1.0 / 360 * 2 * PI));
+		ActorsVector.push_back(new Fungus(fungusX, fungusY, this));
 
 
-	//init food items
-	return GWSTATUS_CONTINUE_GAME;
+
+		//init food items
+		return GWSTATUS_CONTINUE_GAME;
 
 }
 
@@ -153,6 +171,7 @@ int StudentWorld::move()
 	if (playerObject->getHP() <= 0 || playerObject->getAliveStatus() == false)
 	{
 		return GWSTATUS_PLAYER_DIED;
+		decLives();
 	}
 	if (numOfPits == 0 && numOfBacteria == 0)
 	{
