@@ -90,26 +90,27 @@ void Pit::doSomething()
 	}
 
 	SetAsDeadIfLessThan0HP();
+
 	int randomNumberFromOneToFifty = randInt(1, 50);
 	if (randomNumberFromOneToFifty == 1)
 	{
 		bool bacteriaSpawned = false;
 		int chooseBacteriaToSpawn = randInt(1, 3);
-		while (!bacteriaSpawned)
+		while (bacteriaSpawned == false)
 		{
-			if ((randomNumberFromOneToFifty == 1) && RegularSalmonellaInventory > 0)
+			if ((randomNumberFromOneToFifty == 1) && (RegularSalmonellaInventory > 0))
 			{
 				getStudentWorld()->addToActorsVector(new Salmonella(getX(), getY(), getStudentWorld()));
 				RegularSalmonellaInventory--;
 				bacteriaSpawned = true;
 			}
-			if ((randomNumberFromOneToFifty == 2) && AggressiveSalmonellaInventory > 0)
+			if ((randomNumberFromOneToFifty == 2) && (AggressiveSalmonellaInventory > 0))
 			{
 				getStudentWorld()->addToActorsVector(new Salmonella(getX(), getY(), getStudentWorld()));
 				AggressiveSalmonellaInventory--;
 				bacteriaSpawned = true;
 			}
-			if ((randomNumberFromOneToFifty == 3) && EColiInventory > 0)
+			if ((randomNumberFromOneToFifty == 3) && (EColiInventory > 0))
 			{
 				getStudentWorld()->addToActorsVector(new Salmonella(getX(), getY(), getStudentWorld()));
 				EColiInventory--;
