@@ -7,6 +7,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <sstream>
 
 class Socrates;
 class ActorBaseClass;
@@ -31,7 +32,7 @@ public:
 	bool wentOverFood(int centerActorX, int centerActorY);
 	bool wentOverDirtPile(int centerActorX, int centerActorY);
 	bool isThisCoordinateFilled(double testX, double textY);
-
+	void updateDisplayText();
 	//helper functions
 	void removeDeadActors();
 	double getPlayerObjectHealth();

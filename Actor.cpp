@@ -409,7 +409,14 @@ void GoodieBaseClass::baseActionsIfOverlapWithSocrates(int pointsChange)
 	StudentWorld* currentStudentWorldPointer = getStudentWorld();
 	currentStudentWorldPointer->increaseScore(pointsChange);
 	setAsDead();
-	currentStudentWorldPointer->playSound(SOUND_GOT_GOODIE);
+	if (pointsChange > 0)
+	{
+		currentStudentWorldPointer->playSound(SOUND_GOT_GOODIE);
+	}
+	else
+	{
+		currentStudentWorldPointer->playSound(SOUND_PLAYER_HURT);
+	}
 }
 
 void GoodieBaseClass::trackAndDieIfExceedLifeTimeThenIncTick()

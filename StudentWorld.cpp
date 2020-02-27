@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include <sstream>
 using namespace std;
 //class ActorBaseClass;
 
@@ -166,7 +167,6 @@ int StudentWorld::move()
 
 	
 	double fixed_health_num = getPlayerObjectHealth();
-	setGameStatText("Score: " + to_string(getScore()) + " Level: " + to_string(getLevel()) + " Lives: " + to_string(getLives()) + " Health: " + to_string(fixed_health_num) + " Sprays: " + to_string(getPlayerObjectSpraysLeft()) + " Flames: " + to_string(getPlayerObjectFlamesLeft()));
 
 	////spawning new goodies
 	int chanceFungus = max(510 - getLevel() * 10, 200);
@@ -203,6 +203,7 @@ int StudentWorld::move()
 		}
 	}
 
+	updateDisplayText();
 
 	return GWSTATUS_CONTINUE_GAME;
 }
@@ -238,6 +239,7 @@ void StudentWorld::removeDeadActors()
 		}
 	}
 }
+
 
 double StudentWorld::getEuclideanDistance(double baseX, double baseY, double newX, double newY)
 {
@@ -367,6 +369,24 @@ bool StudentWorld::isThisCoordinateFilled(double testX, double textY)
 	return false;
 }
 
+
+void StudentWorld::updateDisplayText()
+{
+	int score = getScore();
+	int level = getLevel();
+	int lives = getLives();
+	int health = getPlayerObjectHealth();
+	int sprays = getPlayerObjectSpraysLeft();
+	int flames = getPlayerObjectFlamesLeft();
+
+	ostringstream oss;
+
+	oss << "Score: " << score << " Level: " << level << " Lives: " << lives << " Health " << health << " Sprays: " << sprays << " Flames: " << flames;
+
+	string text = oss.str();
+	setGameStatText(text);
+
+}
 bool StudentWorld::findFoodWithin128(double bacteriaX, double bacteriaY, double& foodX, double& foodY)
 {
 	vector<ActorBaseClass*>::iterator it;
