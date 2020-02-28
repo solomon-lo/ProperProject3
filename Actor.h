@@ -91,10 +91,6 @@ public:
 
 	void doSomething();
 
-	int getPositionalAngle();
-
-	void changePositionalAngle(int change);
-
 	int getNumOfSprayProjectiles();
 
 	int getNumOfFlameThrowerCharges();
@@ -222,6 +218,7 @@ public:
 	double newXAfter3Food(double inputX);
 	double newYAfter3Food(double inputY);
 	int getFoodEaten();
+	~Bacteria();
 
 	void movementPlanMoveForward3AvoidDirt();
 
