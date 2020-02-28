@@ -57,6 +57,7 @@ bool ActorBaseClass::flameWillHarm()
 	return false;
 }
 
+//checks if there's less than or equal to 0 hp, and sets the object as dead if it is.
 bool ActorBaseClass::SetAsDeadIfLessThan0HP()
 {
 	if (getHP() <= 0)
@@ -83,6 +84,9 @@ Pit::Pit(double startX, double startY, StudentWorld* inputStudentWorld, int imag
 
 void Pit::doSomething()
 {
+
+	//condition to see if it should set itself as dead
+	//this is to see if there's nothing left to spawn
 	if ((RegularSalmonellaInventory + AggressiveSalmonellaInventory + EColiInventory) == 0)
 	{
 		getStudentWorld()->modifyNumOfPits(-1);
@@ -90,6 +94,7 @@ void Pit::doSomething()
 		setAsDead();
 	}
 
+	//the one in fifty chase per tick
 	int randomNumberFromOneToFifty = randInt(1, 50);
 	if (randomNumberFromOneToFifty == 10)
 	{
@@ -99,6 +104,7 @@ void Pit::doSomething()
 
 		while (bacteriaSpawned == false)
 		{
+			//keeps regenerating the random number to choose a bacteria that still has stock left to spawn
 			chooseBacteriaToSpawn = randInt(1, 3);
 			if ((chooseBacteriaToSpawn == 1) && (RegularSalmonellaInventory > 0))
 			{
@@ -122,6 +128,7 @@ void Pit::doSomething()
 				bacteriaSpawned = true;
 			}
 		}
+		//plays the sound when it spawns the new bacteria
 		getStudentWorld()->playSound(SOUND_BACTERIUM_BORN);
 	}
 
@@ -154,10 +161,6 @@ void Socrates::modifyNumOfFlameThrowerCharges(int changeAmount)
 	numOfFlameThrowerCharges += changeAmount;
 }
 
-void Socrates::restoreSocratesFullHP()
-{
-	modifyHP(100 - getHP());
-}
 void Socrates::modifyHP(int modifyAmount)
 {
 	if (modifyAmount < 0)
@@ -185,6 +188,7 @@ void Socrates::doSomething()
 	int ch;
 	if (getStudentWorld()->getKey(ch))
 	{
+		//steering with the arrow keys
 		if (ch == KEY_PRESS_LEFT)
 		{
 
@@ -206,6 +210,7 @@ void Socrates::doSomething()
 			setDirection(getDirection() - 5);
 		}
 
+		//shoots the spray projectiles
 		if (ch == KEY_PRESS_SPACE)
 		{
 			if (numOfSprayProjectiles > 0)
@@ -221,6 +226,7 @@ void Socrates::doSomething()
 
 		}
 
+		//shoots the flames if the enter key is pressed
 		if (ch == KEY_PRESS_ENTER)
 		{
 			if (numOfFlameThrowerCharges > 0)	//SHOULD HAVE numOfFlameThrowerCharges > 0
@@ -293,6 +299,8 @@ void SprayProjectile::doSomething()
 {
 	//TODO:CHECK FOR OVERLAP
 	SetAsDeadIfLessThan0HP();
+
+	//if it detects that it goes over something that takes damage from spray, the spray will set itself as dead
 	bool temp = getStudentWorld()->wentOverSprayableObject(getX(), getY());
 	if (temp == true)
 	{
@@ -314,11 +322,13 @@ FlameProjectile::FlameProjectile(double startX, double startY, StudentWorld* inp
 	distanceTraveled = 0;
 }
 
+
 void FlameProjectile::doSomething()
 {
-	//TODO:CHECK FOR OVERLAP
+
+	//if it goes over something that's flammable, it will set itself as dead
 	SetAsDeadIfLessThan0HP();
-	bool temp = getStudentWorld()->wentOverSprayableObject(getX(), getY());
+	bool temp = getStudentWorld()->wentOverFlammableObject(getX(), getY());
 	if (temp == true)
 	{
 		this->setAsDead();
@@ -326,6 +336,7 @@ void FlameProjectile::doSomething()
 	moveAngle(getDirection(), SPRITE_RADIUS * 2);
 	distanceTraveled += SPRITE_RADIUS * 2;
 
+	//sets itself as dead if it travels 32 units
 	if (distanceTraveled >= 32)
 	{
 		setAsDead();
@@ -354,14 +365,12 @@ bool Food::flameWillHarm()
 
 bool Food::isEdible()
 {
-	//modifyHP(-6);
-	//setAsDead();
 	return true;
 }
 GoodieBaseClass::GoodieBaseClass(double startX, double startY, StudentWorld* inputStudentWorld, int imageID, Direction dir, int depth)
 	:ActorBaseClass(imageID, startX, startY, dir, depth, inputStudentWorld)
 {
-
+	//sets a random lifetime as specified by the spec
 	int randomTime = randInt(50, (300 - 10 * getStudentWorld()->getLevel()));
 	lifetimeTicksTracker = 0;
 	for (int i = 0; i < 20; i++)
@@ -375,7 +384,7 @@ GoodieBaseClass::GoodieBaseClass(double startX, double startY, StudentWorld* inp
 bool ActorBaseClass::checkAliveAndIfOverlapWithSocrates()
 
 {
-
+	//returns true if it overlaps socratesd
 	int distanceFromSocrates = getStudentWorld()->getDistanceFromSocrates(this);
 	if (distanceFromSocrates < 2 * SPRITE_RADIUS)
 	{
@@ -387,14 +396,17 @@ bool ActorBaseClass::checkAliveAndIfOverlapWithSocrates()
 
 void GoodieBaseClass::baseActionsIfOverlapWithSocrates(int pointsChange)
 {
-
+	//sets the goodie as dead
 	StudentWorld* currentStudentWorldPointer = getStudentWorld();
 	currentStudentWorldPointer->increaseScore(pointsChange);
 	setAsDead();
+
+	//plays GOT_GOODIE when it's an actual goodie
 	if (pointsChange > 0)
 	{
 		currentStudentWorldPointer->playSound(SOUND_GOT_GOODIE);
 	}
+	//play sound_player_hurt when it hits a fungus
 	else
 	{
 		currentStudentWorldPointer->playSound(SOUND_PLAYER_HURT);
@@ -403,8 +415,10 @@ void GoodieBaseClass::baseActionsIfOverlapWithSocrates(int pointsChange)
 
 void GoodieBaseClass::trackAndDieIfExceedLifeTimeThenIncTick()
 {
+	//checks to see if it has reached lifetime limit
 	if (lifetimeTicksTracker >= ticksBeforeSetAsDead)
 	{
+		//make itself disappear due to removealldeadactors function
 		setAsDead();
 	}
 	lifetimeTicksTracker++;
@@ -461,11 +475,11 @@ ExtraLifeGoodie::ExtraLifeGoodie(double startX, double startY, StudentWorld* inp
 	:GoodieBaseClass(startX, startY, inputStudentWorld, imageID, dir, depth)
 {}
 
+//if it overlaps, do the base actions plus giving one extra life
 void ExtraLifeGoodie::doSomething()
 {
 	if (checkAliveAndIfOverlapWithSocrates())
 	{
-		//cerr << "overlppaed with soc and goodie" << endl;
 		baseActionsIfOverlapWithSocrates(500);
 
 		getStudentWorld()->incLives();
@@ -478,6 +492,7 @@ void ExtraLifeGoodie::doSomething()
 Fungus::Fungus(double startX, double startY, StudentWorld* inputStudentWorld, int imageID, Direction dir, int depth)
 	:GoodieBaseClass(startX, startY, inputStudentWorld, imageID, dir, depth)
 {}
+
 
 void Fungus::doSomething()
 {
@@ -509,19 +524,17 @@ Bacteria::Bacteria(double startX, double startY, StudentWorld* inputStudentWorld
 	:ActorBaseClass(imageID, startX, startY, dir, depth, inputStudentWorld, inputHP)
 {
 
-
+	//when a new bacter is created, the number of bacteria tracker goes up by one
 	foodEaten = 0;
 
 	getStudentWorld()->modifyNumOfBacteria(1);
-
-	cerr << "constructed one more, now we have:" << getStudentWorld()->getNumOfBacteria() << endl;
 	movementPlanDistance = 0;
 }
 
 Bacteria::~Bacteria()
 {
+	//number of bacteria tracker goes down when the bacteria is destroyed
 	getStudentWorld()->modifyNumOfBacteria(-1);
-	cerr << "Destroyed 1: now we have " << getStudentWorld()->getNumOfBacteria() << endl;
 	int spawnChance = randInt(1, 2);
 	if (spawnChance == 1)
 	{
@@ -627,6 +640,8 @@ void Bacteria::lookAndGoAfterFoodWithin128()
 {
 	double newFoodX;
 	double newFoodY;
+
+	//if there is actually food within 128 units
 	if (getStudentWorld()->findFoodWithin128(getX(), getY(), newFoodX, newFoodY))
 	{
 		const double PI = 4 * atan(1);
@@ -658,9 +673,10 @@ AggressiveSalmonella::AggressiveSalmonella(double startX, double startY, Student
 	:Bacteria(startX, startY, inputStudentWorld, IID_SALMONELLA, dir, depth, inputHP)	
 {}
 
+//this also takes into account the sounds
 void AggressiveSalmonella::modifyHP(int modifyAmount)
 {
-	if (modifyAmount < 0)
+	if (modifyAmount < 0)	//means it took damage
 	{
 		if (getHP() + modifyAmount > 0)
 		{
@@ -669,7 +685,6 @@ void AggressiveSalmonella::modifyHP(int modifyAmount)
 		else if(getHP() + modifyAmount <= 0)
 		{
 			getStudentWorld()->playSound(SOUND_SALMONELLA_DIE);
-			cerr << "bacteria died, current num of bac: " << getStudentWorld()->getNumOfBacteria();
 			getStudentWorld()->increaseScore(100);
 			//getStudentWorld()->modifyNumOfBacteria(-1);
 		}
@@ -685,7 +700,7 @@ void AggressiveSalmonella::doSomething()
 	bool hasDividedThisTick = false;
 	double tempXDistance;
 	double tempYDistance;
-
+	//goes after Socrates if its less than 72 units away
 	if (getStudentWorld()->getDistanceFromSocrates(this) <= 72)
 	{
 
@@ -741,7 +756,6 @@ void AggressiveSalmonella::doSomething()
 		lookAndGoAfterFoodWithin128();
 	}
 
-	//step 7
 }
 Salmonella::Salmonella(double startX, double startY, StudentWorld* inputStudentWorld, int imageID, Direction dir, int depth, int inputHP)
 	:Bacteria(startX, startY, inputStudentWorld, imageID, dir, 0, IID_SALMONELLA)
@@ -771,7 +785,7 @@ void Salmonella::doSomething()
 
 	bool overlappedWithSocratesThisTick = false;
 	bool hasDividedThisTick = false;
-
+	//this allows us to skip steps later on
 	overlappedWithSocratesThisTick = checkIfOverlappedWithSocratesAndModifySocratesHP(-1);
 
 	if (!overlappedWithSocratesThisTick)
@@ -788,7 +802,8 @@ void Salmonella::doSomething()
 		
 	}
 
-	if (!overlappedWithSocratesThisTick && !hasDividedThisTick)//TODO: && 
+	//only do so if it hasn't overlapped with Socrates or divided this tick
+	if (!overlappedWithSocratesThisTick && !hasDividedThisTick)
 	{
 
 		checkIfWentOverFoodAndIncrementIfSo();
@@ -825,7 +840,6 @@ void EColi::modifyHP(int modifyAmount)
 			getStudentWorld()->playSound(SOUND_ECOLI_DIE);
 			getStudentWorld()->increaseScore(100);
 			//getStudentWorld()->modifyNumOfBacteria(-1);
-			cerr << "bacteria died, current num of bac: " << getStudentWorld()->getNumOfBacteria();
 		}
 	}
 	ActorBaseClass::modifyHP(modifyAmount);
@@ -836,6 +850,7 @@ void EColi::doSomething()
 {
 	SetAsDeadIfLessThan0HP();
 
+	//these bools allow us to skip steps
 	bool overlappedWithSocratesThisTick = false;
 	bool hasDividedThisTick = false;
 

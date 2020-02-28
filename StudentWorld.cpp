@@ -42,9 +42,9 @@ void StudentWorld::modifyNumOfBacteria(int modifyAmount)
 
 int StudentWorld::init()
 {
-
+	//instantiates the playerObject Socrates
 	playerObject = new Socrates(this);
-
+	//this creates all of the new pits
 	for (int i = 0; i < getLevel(); i++)
 	{
 		int randomPitX = 0;
@@ -65,6 +65,7 @@ int StudentWorld::init()
 				break;
 			}
 		}
+		//reruns the loop if it actually overlaps with something
 		if (overlappedWithSomething)
 		{
 			i--;
@@ -97,6 +98,7 @@ int StudentWorld::init()
 				break;
 			}
 		}
+		//reruns loop if overlap detected
 		if (overlappedWithSomething)
 		{
 			i--;
@@ -108,6 +110,8 @@ int StudentWorld::init()
 
 	//ADDING DIRTPILES
 	int numOfDirtPiles = max(180 - 20 * getLevel(), 20);
+
+	//uses the previously generated amount of dirt piles
 	for (int i = 0; i < numOfDirtPiles; i++)
 	{
 		int randomDirtX = 0;
@@ -119,6 +123,7 @@ int StudentWorld::init()
 		}
 		bool overlappedWithSomething = false;
 		vector<ActorBaseClass*>::iterator it;
+
 		for (it = ActorsVector.begin(); it != ActorsVector.end(); it++)
 		{
 			double distanceToCenterActor = getEuclideanDistance(randomDirtX, randomDirtY, (*it)->getX(), (*it)->getY());
@@ -144,14 +149,19 @@ int StudentWorld::init()
 
 }
 
+//keeps looping
 int StudentWorld::move()
 {
+
+	//checks to see if the player is still live
 	if (playerObject->getHP() <= 0 || playerObject->getAliveStatus() == false)
 	{
+		//subtracts from the lives if its actually dead
 		decLives();
 		return GWSTATUS_PLAYER_DIED;
 	}
 
+	//check for the win condition
 	if (numOfPits == 0 && numOfBacteria == 0)
 	{
 		return GWSTATUS_FINISHED_LEVEL;
@@ -181,6 +191,8 @@ int StudentWorld::move()
 		ActorsVector.push_back(new Fungus(fungusX, fungusY, this));
 	}
 
+
+	//generates the different ratios as well
 	int chanceGoodie = max(510 - getLevel() * 10, 250);
 	int goodieRandomNumber = randInt(0, chanceGoodie);
 	if (goodieRandomNumber == 0)
@@ -189,6 +201,8 @@ int StudentWorld::move()
 		int randomDegree = randInt(0, 359);
 		double goodieX = (VIEW_WIDTH / 2) + (128 * cos(randomDegree * 1.0 / 360 * 2 * PI));
 		double goodieY = (VIEW_HEIGHT / 2) + (128 * sin(randomDegree * 1.0 / 360 * 2 * PI));
+
+		//implementaiton of the random goodies drop
 		int goodieSelector = randInt(1, 10);
 		if (goodieSelector == 1)
 		{
@@ -204,11 +218,14 @@ int StudentWorld::move()
 		}
 	}
 
+	//calls the function to update the game text
 	updateDisplayText();
 
 	return GWSTATUS_CONTINUE_GAME;
 }
 
+
+//get the Socrates health
 double StudentWorld::getPlayerObjectHealth()
 {
 	return playerObject->getHP();
@@ -225,6 +242,7 @@ int StudentWorld::getPlayerObjectFlamesLeft()
 }
 void StudentWorld::removeDeadActors()
 {
+	//iterates through all the actors sees if any of them have 0 health
 	vector<ActorBaseClass*>::iterator it;
 	for (it = ActorsVector.begin(); it != ActorsVector.end(); )
 	{
@@ -244,6 +262,8 @@ void StudentWorld::removeDeadActors()
 
 double StudentWorld::getEuclideanDistance(double baseX, double baseY, double newX, double newY)
 {
+
+	//trigonometry to calculate the Euclidean distance
 	double difX = abs((newX - baseX));
 	double difY = abs((newY - baseY));
 	double toSqrt = ((difX * difX) + (difY * difY));
@@ -279,11 +299,13 @@ void StudentWorld::fungusEffect()
 }
 bool StudentWorld::wentOverSprayableObject(int centerActorX, int centerActorY)
 {
+	//iterates through all of the Actors
 	vector<ActorBaseClass*>::iterator it;
 	for (it = ActorsVector.begin(); it != ActorsVector.end(); it++)
 	{
 
 		double distanceToCenterActor = getEuclideanDistance(centerActorX, centerActorY, (*it)->getX(), (*it)->getY());
+		//if it's close and spray harms it
 		if (distanceToCenterActor <= SPRITE_RADIUS * 2)
 		{
 			if ((*it)->sprayWillHarm() == true)
@@ -298,11 +320,13 @@ bool StudentWorld::wentOverSprayableObject(int centerActorX, int centerActorY)
 
 bool StudentWorld::wentOverFlammableObject(int centerActorX, int centerActorY)
 {
+	//iterates through all of the different actors
 	vector<ActorBaseClass*>::iterator it;
 	for (it = ActorsVector.begin(); it != ActorsVector.end(); it++)
 	{
 
 		double distanceToCenterActor = getEuclideanDistance(centerActorX, centerActorY, (*it)->getX(), (*it)->getY());
+		//if it overlaps and is harmed by flames
 		if (distanceToCenterActor <= SPRITE_RADIUS * 2)
 		{
 			if ((*it)->flameWillHarm() == true)
@@ -333,11 +357,7 @@ bool StudentWorld::wentOverDirtPile(int centerActorX, int centerActorY)
 	return false;
 }
 
-//double angle = (180/PI) * atan2(player->getY() - a->getY()), player->getX() - a-getX()));
-
-
-//food or socrates is front value
-//bacteria is back value
+//also causes the effects when it goves over food
 bool StudentWorld::wentOverFood(int centerActorX, int centerActorY)
 {
 	vector<ActorBaseClass*>::iterator it;
@@ -360,21 +380,14 @@ bool StudentWorld::wentOverFood(int centerActorX, int centerActorY)
 	return false;
 }
 
-bool StudentWorld::isThisCoordinateFilled(double testX, double textY)
-{
-	vector<ActorBaseClass*>::iterator it;
-	for (it = ActorsVector.begin(); it != ActorsVector.end(); it++)
-	{
 
-	}
-	return false;
-}
-
+//returns true if there's something in the coordinate
 
 void StudentWorld::updateDisplayText()
 {	
 	ostringstream oss;
 
+	//creates the game text in the proper format
 	oss << "  Score: ";
 	oss.fill('0');
 	if (getScore() < 0)
@@ -417,6 +430,8 @@ void StudentWorld::updateDisplayText()
 	setGameStatText(text);
 
 }
+
+//sees if there's food within 128 units, returns true if there is and sets foodX and foodY to the coordinates of the food
 bool StudentWorld::findFoodWithin128(double bacteriaX, double bacteriaY, double& foodX, double& foodY)
 {
 	vector<ActorBaseClass*>::iterator it;
@@ -437,6 +452,7 @@ bool StudentWorld::findFoodWithin128(double bacteriaX, double bacteriaY, double&
 			}
 		}
 	}
+	//only reaches here after findin ghte smallest distance
 	if ((currentSmallestX == 9999999) && (currentSmallestY == 9999999))
 	{
 		return false;
@@ -450,6 +466,7 @@ bool StudentWorld::findFoodWithin128(double bacteriaX, double bacteriaY, double&
 	}
 }
 
+//looks to see if the Socrates is actually within the distance
 bool StudentWorld::findSocratesWithinDistance(double bacteriaX, double bacteriaY, double& SocratesX, double& SocratesY, int inputDistance)
 {
 	double currentSocratesX = playerObject->getX();
@@ -466,6 +483,7 @@ bool StudentWorld::findSocratesWithinDistance(double bacteriaX, double bacteriaY
 
 }
 
+//iterates through everything and deletes everything, even if it's still alive
 void StudentWorld::cleanUp()
 {
 	delete playerObject;
@@ -477,6 +495,7 @@ void StudentWorld::cleanUp()
 	ActorsVector.clear();
 }
 
+//pushes things to the back of the vector, where it'll be iterated through every tick
 void StudentWorld::addToActorsVector(ActorBaseClass* actorToAdd)
 {
 	ActorsVector.push_back(actorToAdd);
